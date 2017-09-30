@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>组分构成</title>
+    <link rel="stylesheet" type="text/css" href="../vendor/bootstrap/v3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="blk-top">
+            <h2 class="title">VOCs监控分析平台展示</h2>
+         </div>
+
+	  <nav class="vertical">
+	    <ul>
+	      <li>
+	        <a href="emission_location.html">实时监测</a>
+	        <div>
+	          <ul>
+ 				<li><a href="sensor_data.html">点位地图</a></li>
+ 				<li><a href="heatmap.html">热力图</a>
+	          </ul>
+	        </div>
+	      </li>
+	      <li>
+	        <a href="gas_analysis.html">气体分析</a>
+	        <div>
+	          <ul>
+ 				<li><a href="gas_analysis.html">园区排放一览</a></li>
+				<li><a href="regional_analysis.html">厂区历史数据</a></li>
+				<li><a href="issue_detection.html">异常监测</a></li>
+				<li><a href="javascript:void(0);" class="active">组分构成</a></li>
+	          </ul>
+	        </div>
+	      </li>
+	      <li>
+	        <a href="source_tracking.html">污染溯源</a>
+	        <div>
+	          <ul>
+ 				<li><a href="source_tracking.html">排放源</a></li>
+				<li><a href="monitor_location.html">监测重点</a></li>
+	          </ul>
+	        </div>
+	      </li>
+	    </ul>
+	  </nav>	
+		
+        
+        <div class="blk-bottom">
+            <div id="mapBox" class="box" style="min-height: 600px;"></div>
+            
+        </div>
+    </div>
+
+<script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+<script src="../vendor/echarts-2.2.7/build/dist/echarts.js"></script>
+
+</body>
+</html>
+
+<script type="text/javascript">
+(function () {
+    require.config({
+        paths: {
+            echarts: '../vendor/echarts-2.2.7/build/dist'
+        }
+    });
+
+    require(
+    [
+        'echarts',
+        'echarts/chart/chord',
+        'echarts/chart/force'
+    ],
+    function (ec) {
+        // 基于准备好的dom，初始化echarts图表
+        var myChart = ec.init(document.getElementById('mapBox')); 
+
+        option = {
+        	    title : {
+        	        text: '各化工厂排放气体种类一览',
+        	        x:'left',
+        	        y:'top'
+        	    },
+        	    tooltip : {
+        	        trigger: 'item',
+        	        formatter: function (params) {
+        	            if (params.indicator2) {    // is edge
+        	                return params.indicator2 + ' ' + params.name + ' ' + params.indicator;
+        	            } else {    // is node
+        	                return params.name
+        	            }
+        	        }
+        	    },
+        	    toolbox: {
+        	        show : true,
+        	        feature : {
+        	            restore : {show: true},
+        	            magicType: {show: true, type: ['force', 'chord']},     
+        	        }
+        	    },
+        	    legend: {
+        	        x: 'center',
+        	        data:['橡胶厂', '炼油厂', '化工一厂','化工二厂']
+        	    },
+        	    series : [
+        	        {
+        	            name: '气体组分',
+        	            type:'chord',
+        	            ribbonType: false,
+        	            radius: '65%',
+        	            itemStyle : {
+        	                normal : {
+        	                    label : {
+        	                        rotate : true
+        	                    }
+        	                }
+        	            },
+        	            minRadius: 8,
+        	            maxRadius: 20,
+        	            // 使用 nodes links 表达和弦图
+        	            nodes: [
+        	                {name:'苯'},
+        	                {name:'甲苯'},
+        	                {name:'二甲苯'},
+        	                {name:'苯乙烯'},        	                
+        	                {name:'乙烯'},
+        	                {name:'乙烷'},
+        	                {name:'甲烷'},
+        	                {name:'丁酮'},
+        	                {name:'橡胶厂', symbol:'star'},
+        	                {name:'炼油厂', symbol:'star'},
+        	                {name:'化工一厂', symbol:'star'},
+        	                {name:'化工二厂', symbol:'star'}
+        	            ],
+        	            links: [
+        	                {source: '橡胶厂', target: '苯', weight: 1, name: '排放'},
+        	                {source: '橡胶厂', target: '苯乙烯', weight: 1, name: '排放'},
+        	                {source: '橡胶厂', target: '二甲苯', weight: 1, name: '排放'},
+        	                {source: '橡胶厂', target: '丁酮', weight: 1, name: '排放'},        	                
+        	                {source: '炼油厂', target: '乙烷', weight: 1, name: '排放'},
+        	                {source: '炼油厂', target: '乙烯', weight: 1, name: '排放'},
+        	                {source: '炼油厂', target: '甲烷', weight: 1, name: '排放'},
+        	                {source: '化工二厂', target: '甲烷', weight: 1, name: '排放'},
+        	                {source: '化工一厂', target: '苯', weight: 1, name: '排放'},
+        	                {source: '化工一厂', target: '丁酮', weight: 1, name: '排放'},
+        	                {source: '化工二厂', target: '乙烯', weight: 1, name: '排放'}
+        	            ]
+        	        }
+        	    ]
+        	};
+        	                           	                    
+        // 为echarts对象加载数据 
+        myChart.setOption(option);
+        setTimeout(function (){
+            window.onresize = function () {
+                myChart.resize();
+            }
+        },200)
+    }
+);
+})();
+</script>

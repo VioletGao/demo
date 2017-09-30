@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>气体分析</title>
+    <link rel="stylesheet" type="text/css" href="../vendor/bootstrap/v3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="blk-top">
+            <h2 class="title">VOCs监控分析平台展示</h2>
+         </div>
+                
+	 	  <nav class="vertical">
+		    <ul>
+		      <li>
+		        <a href="emission_location.html">实时数据</a>
+		        <div>
+		          <ul>
+	           		<li><a href="emission_location.html">污染排放点</a></li>
+	 				<li><a href="sensor_data.html">点位地图</a></li>
+	 				<li><a href="heatmap.html">热力图</a></li>
+					<li><a href="device_info.html">设备信息</a></li>
+		          </ul>
+		        </div>
+		      </li>
+		      <li>
+		        <a href="gas_analysis.html">气体分析</a>
+		        <div>
+		          <ul>
+	 				<li><a href="javascript:void(0);" class="active">园区概况</a></li>
+					<li><a href="regional_analysis.html">厂区情况</a></li>
+					<li><a href="issue_detection.html">异常监测</a></li>
+					<li><a href="component.html">组分构成</a></li>
+		          </ul>
+		        </div>
+		      </li>
+		      <li>
+		        <a href="source_tracking.html">污染溯源</a>
+		        <div>
+		          <ul>
+	 				<li><a href="source_tracking.html">排放源</a></li>
+					<li><a href="monitor_location.html">监测重点</a></li>
+		          </ul>
+		        </div>
+		      </li>
+		    </ul>
+		  </nav>
+        
+        <div class="blk-bottom">
+            <div id="mapBox" class="box" style="min-height: 580px;"></div>
+            
+        </div>
+    </div>
+
+
+<script type="text/javascript" src="../vendor/jquery/jquery.min.js"></script>
+<script src="../vendor/echarts-2.2.7/build/dist/echarts.js"></script>
+<script src="regional_data.js"></script>
+</body>
+</html>
+
+<script type="text/javascript">
+document.write(dataMap.rubber['0'][1].name);
+
+(function () {
+    require.config({
+        paths: {
+            echarts: '../vendor/echarts-2.2.7/build/dist'
+        }
+    });
+
+    require(
+    [
+        'echarts',
+        'echarts/chart/line',
+        'echarts/chart/bar'
+    ],
+    function (ec) {
+        // 基于准备好的dom，初始化echarts图表
+        var myChart = ec.init(document.getElementById('mapBox')); 
+
+        option = {
+        	    timeline:{
+        	        data:[
+        	            '2011-01-01','2012-01-01','2013-01-01','2014-01-01','2015-01-01',
+        	            '2016-01-01'
+        	        ],
+        	        label : {
+        	            formatter : function(s) {
+        	                return s.slice(0, 4);
+        	            }
+        	        },
+        	        autoPlay : false
+        	    },
+        	    options:[
+        	        {
+        	            title : {
+        	                'text':'2011燕山石化各化工厂TVOC排放情况',
+        	                //'subtext':'数据来自国家统计局'
+        	            },
+        	            tooltip : {'trigger':'axis'},
+        	            legend : {
+                	        data:['排放量']
+        	            },
+        	            toolbox : {
+        	                'show':true, 
+        	                'feature':{
+        	                    'dataView':{'show':true,'readOnly':false},
+        	                    'saveAsImage':{'show':true}
+        	                }
+        	            },
+        	            calculable : true,
+        	            grid : {'y':80,'y2':100},
+        	            xAxis : [
+        	            	{
+            	            	type : 'category',
+            	            	data : ['一厂','二厂','三厂','六厂','七厂','八厂','橡胶厂','炼油厂','储运一厂','储运二厂','一热力','二热力','三热力']
+        	            	}
+        	            ],
+        	            yAxis : [
+        	                {
+        	                    type: 'value',
+        	                    //'name':'GDP（亿元）',
+        	                    max: 200
+        	                }
+        	            ],
+                	    color : ["red"],
+        	            series : [
+        	                {
+                	            name:'排放量',
+                	            type:'bar',
+                	            markPoint : {
+                	                data : [
+                	                    {type : 'max', name: '最大值'},
+                	                    {type : 'min', name: '最小值'}
+                	                ]
+                	            },
+        	                    markLine:{
+        	                        symbol : ['arrow','none'],
+        	                        symbolSize : [4, 2],
+        	                        itemStyle : {
+        	                            normal: {
+        	                                lineStyle: {color:'orange'},
+        	                                barBorderColor:'orange',
+        	                                label:{
+        	                                    formatter:function(params){
+        	                                        return Math.round(params.value);
+        	                                    },
+        	                                    textStyle:{color:'orange'}
+        	                                }
+        	                            }
+        	                        },
+        	                        data:[
+        	                        	{type : 'average', name: '平均值'}
+        	                        ]
+        	                    },
+        	                    data: dataMap.TVOC['2011']
+        	                }
+        	            ]
+        	        },
+        	        {
+        	            title : {text:'2012燕山石化各化工厂TVOC排放情况'},
+        	            series : [
+        	                {data: dataMap.TVOC['2012']}
+        	            ]
+        	        },
+        	        {
+        	            title : {text:'2013燕山石化各化工厂TVOC排放情况'},
+        	            series : [
+        	                {data: dataMap.TVOC['2013']},
+        	            ]
+        	        },
+        	        {
+        	            title : {text:'2014燕山石化各化工厂TVOC排放情况'},
+        	            series : [
+        	                {data: dataMap.TVOC['2014']}
+        	            ]
+        	        },
+        	        {
+        	            title : {text:'2015燕山石化各化工厂TVOC排放情况'},
+        	            series : [
+        	                {'data': dataMap.TVOC['2015']}
+        	            ]
+        	        },
+        	        {
+        	            title : {text:'2016燕山石化各化工厂TVOC排放情况'},
+        	            series : [
+        	                {'data': dataMap.TVOC['2016']}
+        	            ]
+        	        }
+        	    ]
+        	};
+        	                    
+
+        // 为echarts对象加载数据 
+        myChart.setOption(option);
+        setTimeout(function (){
+            window.onresize = function () {
+                myChart.resize();
+            }
+        },200)
+    }
+);
+})();
+</script>

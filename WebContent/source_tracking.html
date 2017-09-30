@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>排放源</title>
+    <link rel="stylesheet" type="text/css" href="../vendor/bootstrap/v3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="blk-top">
+            <h2 class="title">VOCs监控分析平台展示</h2>
+        </div>
+         
+ 	  <nav class="vertical">
+	    <ul>
+	      <li>
+	        <a href="emission_location.html">实时监测</a>
+	        <div>
+	          <ul>
+ 				<li><a href="sensor_data.html">点位地图</a></li>
+ 				<li><a href="heatmap.html">热力图</a></li>
+	          </ul>
+	        </div>
+	      </li>
+	      <li>
+	        <a href="gas_analysis.html">气体分析</a>
+	        <div>
+	          <ul>
+ 				<li><a href="gas_analysis.html">园区排放一览</a></li>
+				<li><a href="regional_analysis.html">厂区历史数据</a></li>
+				<li><a href="issue_detection.html">异常监测</a></li>
+				<li><a href="component.html">组分构成</a></li>
+	          </ul>
+	        </div>
+	      </li>
+	      <li>
+	        <a href="source_tracking.html">污染溯源</a>
+	        <div>
+	          <ul>
+ 				<li><a href="javascript:void(0);" class="active">排放源</a></li>
+				<li><a href="monitor_location.html">监测重点</a></li>
+	          </ul>
+	        </div>
+	      </li>
+	    </ul>
+	  </nav>
+	                          
+         <div class="blk-bottom">
+            <div id="mapBox" class="box" style="width:50%;"></div>
+            <div class="col-md-10 col-md-offset-1" style="margin-left: 0; width: 40%; position: absolute; top: 155px; right: 1.5%;">
+                <table id="table" class="table table-striped table-bordered table-hover table-textcenter" >          	
+                    <thead>
+                        <tr class="bg-99CC33-only ">
+                            <th>时间段</th>
+                            <th>化工厂</th>                         
+                            <th>环节</th>
+							<th>超排污染物</th>
+							<th>超值设备</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data">         
+          			</tbody>
+                </table>   
+            </div>                        
+        </div>
+    </div>
+
+<script src="http://api.map.baidu.com/api?v=2.0&ak=F6wOCqmG6wlsLB570gTAoe5MRHZM5Siw" type="text/javascript"></script>
+<script src="../vendor/echarts-2.2.7/extension/BMap/doc/BMap.js"></script>
+<script src="../vendor/jquery/jquery.min.js"></script>
+<script src="../vendor/echarts-2.2.7/build/dist/echarts.js"></script>
+  
+</body>
+</html>
+
+
+<script type="text/javascript">
+(function () {
+    require.config({
+        paths: {
+            echarts: '../vendor/echarts-2.2.7/build/dist'
+        },
+        packages: [
+            {
+                name: 'BMap',
+                location: '../vendor/echarts-2.2.7/extension/BMap/src',
+                main: 'main'
+            }
+        ]
+    });
+
+    require(
+    [
+        'echarts',
+        'BMap',
+        'echarts/chart/map',
+        'echarts/chart/chord'
+    ],
+    function (echarts, BMapExtension) {
+
+        // 初始化地图
+        var BMapExt = new BMapExtension('mapBox', BMap, require('echarts'), require('zrender'));
+        var map = BMapExt.getMap();
+        var container = BMapExt.getEchartsContainer();
+    	var point = new BMap.Point(115.96, 39.75);
+    	map.centerAndZoom(point, 14);  
+        map.enableScrollWheelZoom(true);
+    	
+        // 添加地图缩放控件
+        var opts = {type: BMAP_NAVIGATION_CONTROL_SMALL}
+        map.addControl(new BMap.NavigationControl(opts));
+        
+        var polygon = new BMap.Polygon([
+    		new BMap.Point(115.949364,39.770966),
+    		new BMap.Point(115.948645,39.765199),
+    		new BMap.Point(115.932835,39.753439),
+    		new BMap.Point(115.926655,39.739681),
+    		new BMap.Point(115.928, 39.739),
+    		new BMap.Point(115.936, 39.734),
+    		new BMap.Point(115.981, 39.72),
+    		new BMap.Point(115.986087,39.728362),
+    		new BMap.Point(115.998447,39.730748),
+    		new BMap.Point(115.997512,39.744231),
+    		new BMap.Point(115.98314,39.767972),
+    		new BMap.Point(115.949364,39.770966)
+    	], {strokeColor:"red", strokeWeight:2, strokeOpacity:0.8});   
+    	polygon.setFillOpacity(0.5);
+    	map.addOverlay(polygon);  
+
+    	// 地图自定义样式
+        map.setMapStyle({
+            styleJson: [               
+                 {
+                     "featureType": "poi",
+                     "elementType": "all",
+                     "stylers": {
+                          "visibility": "off"
+                     }
+                }
+            ]
+        });
+    	
+    	// 标注厂区位置
+    	var locations;
+    	$.getJSON ("factories.json", function (data) {
+    		locations = data;
+    		for (var i = 0; i < 10; i ++) {
+    			var lng = locations[i].LNG;
+    			var lat = locations[i].LAT;
+    			var point = new BMap.Point(lng, lat);
+    			var marker = new BMap.Marker(point);
+    	    	var label = new BMap.Label(locations[i].NAME,{offset:new BMap.Size(20,-10)});
+    	    	label.setStyle({
+    	    		border: '0'
+    	    	})
+    	    	marker.setLabel(label);
+    			//var content = "ID: " + locations[i].ID + ", " + locations[i].NAME;
+    			map.addOverlay(marker);	
+    	        //addClickHandler(content, marker);
+    		}
+    	});
+    	
+        option = {
+            color: ['#E81253','#6680CA','#FFBF00'],
+            tooltip : {
+                trigger: 'item',
+                formatter: function (v) {
+                    return v[1].replace(':', ' > ');
+                }
+            },
+            legend: {
+                orient: 'vertical',
+                x:'right',
+                y:'bottom',
+                data:['苯', '甲苯', '非甲烷总烃'],
+                selectedMode: 'multiple',
+                selected:{
+                    '苯' : true,
+                    '甲苯': true,
+                    '非甲烷总烃': true
+                },
+                textStyle : {
+                    color: 'black'
+                }
+            },
+            series : [
+                {
+                    name:'苯',
+                    type:'map',
+                    mapType: 'none',
+                    data:[],
+                    geoCoord: {
+                        '苯1': [115.9352,39.7400],
+                        '苯2': [115.9728,39.7473],                                                                        	                       
+                    },
+                    markPoint : {
+                        symbol:'emptyCircle',
+                        symbolSize : 20,
+                        	//function (v){
+                            //return 10 + v/25                          
+                        //},
+                        effect : {
+                            show: true
+                        },
+                        data : [
+                            {name:'苯1',value:0},
+                            {name:'苯2',value:0}
+                        ]
+                    }
+
+                },
+                {
+                    name:'甲苯',
+                    type:'map',
+                    mapType: 'none',
+                    data:[],
+                    geoCoord: {
+                        '甲苯1': [115.9433,39.7551],                            
+                        '甲苯2': [115.9826,39.7349]                 	                       
+                    },
+                    markPoint : {
+                        symbol:'emptyCircle',
+                        symbolSize : 20,
+                        effect : {
+                            show: true
+                        },
+                        data : [
+                            {name:'甲苯1',value:0},
+                            {name:'甲苯2',value:0}
+                        ]
+                    }
+                },
+                {
+                    name:'非甲烷总烃',
+                    type:'map',
+                    mapType: 'none',
+                    data:[],
+                    geoCoord: {
+                        '非甲烷总烃1': [115.9633,39.7621],                            
+                        '非甲烷总烃2': [115.9628,39.7503]                 	                       
+                    },
+                    markPoint : {
+                        symbol:'emptyCircle',
+                        symbolSize : 20,
+                        effect : {
+                            show: true
+                        },
+                        data : [
+                            {name:'非甲烷总烃1',value:0},
+                            {name:'非甲烷总烃2',value:0}
+                        ]
+                    }
+                }                
+            ]
+        };
+
+        var myChart = BMapExt.initECharts(container);
+        window.onresize = myChart.onresize;
+        BMapExt.setOption(option);                    
+        
+    }
+);
+})();
+</script>
+
+
+<script>
+	$.getJSON("monitor_data.json", function(data) {
+		var items = '';
+		$.each(data, function(key, val) {
+			items += "<tr>";
+			items += "<td id="+key+">"+val.TIME+"</td>";
+			items += "<td id='"+key+"'>"+val.FACTORY+"</td>";
+			items += "<td id='"+key+"'>"+val.SECTION+"</td>";
+			items += "<td id='"+key+"'>"+val.VOC+"</td>";
+			items += "<td id='"+key+"'>"+val.SENSOR+"</td>";
+			items += "</tr>";
+		});
+		$('#data').append(items);
+	});		
+</script>

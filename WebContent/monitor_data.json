@@ -1,0 +1,52 @@
+[
+	{
+		"TIME": "6:00-10:00",
+		"FACTORY": "化工三厂",
+		"SECTION": "工艺过程区",
+		"VOC": "二氯甲烷",
+		"STATUS": "已监测",
+		"CONCENTRATION": "1.27 ppm",
+		"FEEDBACK": "超排10.4%，净化设备故障",
+		"SENSOR": ""
+	},
+	{
+		"TIME": "17:00-20:00",
+		"FACTORY": "炼油厂",
+		"SECTION": "油品罐区",
+		"VOC": "甲苯",
+		"STATUS": "已监测",
+		"CONCENTRATION": "0.12 ppm",
+		"FEEDBACK": "正常排放范围内",
+		"SENSOR": ""
+	},
+	{
+		"TIME": "10:00-15:00",
+		"FACTORY": "化工二厂",
+		"SECTION": "原料罐区",
+		"VOC": "丙酮",
+		"STATUS": "已监测",
+		"CONCENTRATION": "0.39 ppm",
+		"FEEDBACK": "超排14%，原料存储区泄露",
+		"SENSOR": ""
+	},
+	{
+		"TIME": "12:00-14:00",
+		"FACTORY": "化工八厂",
+		"SECTION": "处理设施排放口",
+		"VOC": "乙烯",
+		"STATUS": "未检测",
+		"CONCENTRATION": "",
+		"FEEDBACK": "",
+		"SENSOR": ""
+	},
+	{
+		"TIME": "8:00-11:00",
+		"FACTORY": "橡胶厂",
+		"SECTION": "产品仓库",
+		"VOC": "丁酮",
+		"STATUS": "未检测",
+		"CONCENTRATION": "",
+		"FEEDBACK": "",
+		"SENSOR": ""
+	}
+]

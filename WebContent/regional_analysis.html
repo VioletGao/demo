@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>橡胶厂历史数据</title>
+    <link rel="stylesheet" type="text/css" href="../vendor/bootstrap/v3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <script src="../vendor/jquery/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>    
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="blk-top">
+            <h2 class="title">VOCs监控分析平台展示</h2>
+        </div>
+            
+ 	  <nav class="vertical">
+	    <ul>
+	      <li>
+	        <a href="emission_location.html">实时监测</a>
+	        <div>
+	          <ul>
+ 				<li><a href="sensor_data.html">点位地图</a></li>
+ 				<li><a href="heatmap.html">热力图</a></li>
+	          </ul>
+	        </div>
+	      </li>
+	      <li>
+	        <a href="gas_analysis.html">气体分析</a>
+	        <div>
+	          <ul>
+ 				<li><a href="gas_analysis.html">园区排放一览</a></li>
+				<li><a href="javascript:void(0);" class="active">厂区历史数据</a></li>
+				<li><a href="issue_detection.html">异常监测</a></li>
+				<li><a href="component.html">组分构成</a></li>
+	          </ul>
+	        </div>
+	      </li>
+	      <li>
+	        <a href="source_tracking.html">污染溯源</a>
+	        <div>
+	          <ul>
+ 				<li><a href="source_tracking.html">排放源</a></li>
+				<li><a href="monitor_location.html">监测重点</a></li>
+	          </ul>
+	        </div>
+	      </li>
+	    </ul>
+	  </nav>
+
+        <div class="blk-bottom">
+          	<div class="dropdown" style="top: -20px;">
+    			<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">橡胶厂
+    			<span class="caret"></span></button>
+    			<ul class="dropdown-menu">
+      				<li><a href="regional_analysis.html">橡胶厂</a></li>
+      				<li><a href="regional_analysis_oil.html">炼油厂</a></li>
+				</ul>
+  			</div>
+  			        				                    		
+            <div id="box1" class="box" style="min-height: 480px; width: 30%; top: 0px; right: 55%"></div>
+            <div id="box2" class="box" style="position: absolute; top: 175px; left: 630px; min-height: 480px; width: 60%;"></div>
+          	<div class="dropdown" style="position: absolute; top: 185px; left: 480px;">
+    			<button id="button1" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">排口
+    			<span class="caret"></span></button>
+    			<ul class="dropdown-menu">
+      				<li onclick="updatePieChart(0)"><a href="#">排口数据</a></li>
+      				<li onclick="updatePieChart(1)"><a href="#">上风口数据</a></li>
+      				<li onclick="updatePieChart(2)"><a href="#">下风口数据</a></li>
+    			</ul>
+  			</div>
+          	<div class="dropdown" style="position: absolute; top: 185px; left: 1420px;">
+    			<button id="button2" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">苯乙烯
+    			<span class="caret"></span></button>
+    			<ul class="dropdown-menu">
+      				<li onclick="updateLineChart(0)"><a href="#">苯乙烯</a></li>
+      				<li onclick="updateLineChart(1)"><a href="#">苯</a></li>
+      				<li onclick="updateLineChart(2)"><a href="#">二甲苯</a></li>
+      				<li onclick="updateLineChart(3)"><a href="#">丁酮</a></li>      				
+    			</ul>
+  			</div>      			                      
+        </div>
+    </div>
+
+<script src="../vendor/echarts-2.2.7/build/dist/echarts.js"></script>
+<script src="regional_data.js"></script>
+
+</body>
+</html>
+
+<script>
+(function () {
+    require.config({
+        paths: {
+            echarts: '../vendor/echarts-2.2.7/build/dist'
+        }
+    });
+    
+    require(
+    [
+        'echarts',
+        'echarts/chart/pie',
+        'echarts/chart/line'
+    ],
+    function (ec) {
+        // 基于准备好的dom，初始化echarts图表
+        var myChart = ec.init(document.getElementById('box1'));
+        option = {
+        	    title : {
+        	        text: '橡胶厂VOC气体组分占比',
+        	        subtext: '排口数据',
+        	        x:'left'
+        	    },
+        	    tooltip : {
+        	        trigger: 'item',
+        	        formatter: "{a} <br/>{b} : {c} ({d}%)"
+        	    },
+        	    series : [
+        	        {
+        	            name:'气体成分',
+        	            type:'pie',
+        	            radius : '62%',
+        	            center: ['50%', '50%'],
+        	            data: dataMap.rubber[0]
+        	        }
+        	    ]
+        	};
+        myChart.setOption(option);
+
+        var myChart2 = ec.init(document.getElementById('box2'));
+        option2 = {
+        	    title : {
+        	        text : '苯乙烯历史排放数据（日计算）',
+        	        subtext : '橡胶厂'
+        	    },
+        	    tooltip : {
+        	        trigger: 'item',
+        	        formatter : function (params) {
+        	            var date = new Date(params.value[0]);
+        	            data = date.getFullYear() + '-'
+        	                   + (date.getMonth() + 1) + '-'
+        	                   + date.getDate() + ' '
+        	                   + date.getHours() + ':'
+        	                   + date.getMinutes();
+        	            return data + '<br/>'
+        	                   + params.value[1]
+        	        }
+        	    },
+        	    dataZoom: {
+        	        show: true,
+        	        start : 70,
+        	        end : 98
+        	    },
+        	    legend : {
+                    orient: 'vertical',
+                    x:'right',
+                    y:'center',
+        	        data : ['排口','上风口','下风口']
+        	    },
+        	    grid: {
+        	        y2: 80
+        	    },
+        	    xAxis : [
+        	        {
+        	            type : 'time',
+        	            splitNumber:10
+        	        }
+        	    ],
+        	    yAxis : [
+        	        {
+        	            type : 'value',
+        	            min : 0
+        	        }
+        	    ],
+        	    series : [
+        	        {
+        	            name: '排口',
+        	            type: 'line',
+        	            showAllSymbol: true,
+        	            data: dataMap.rubberGas[0][0]
+        	        },
+        	        {
+        	            name: '上风口',
+        	            type: 'line',
+        	            showAllSymbol: true,
+        	            data: dataMap.rubberGas[0][1]
+        	        },
+        	        {
+        	            name: '下风口',
+        	            type: 'line',
+        	            showAllSymbol: true,
+        	            data: dataMap.rubberGas[0][2]
+        	        }
+        	    ]
+        	};
+        myChart2.setOption(option2);
+
+        setTimeout(function (){
+            window.onresize = function () {
+                myChart.resize();
+                myChart2.resize();
+            }
+        },200)               
+    });
+    
+})();
+
+
+
+function updatePieChart(id) {
+	var name = ['排口','上风口','下风口'];
+	
+	document.getElementById('button1').innerHTML= name[id]+'<span class="caret"></span>';
+	(function () {
+	    require.config({
+	        paths: {
+	            echarts: '../echarts-2.2.7/build/dist'
+	        }
+	    });
+
+	    require(
+	    [
+	        'echarts',
+	        'echarts/chart/pie'
+	    ],
+	    function (ec) {
+	        var myChart = ec.init(document.getElementById('box1'));
+	        option = {
+	        	    title : {
+	        	        text: '橡胶厂VOC气体组分占比',
+	        	        subtext: name[id]+'数据',
+	        	        x:'left'
+	        	    },
+	        	    tooltip : {
+	        	        trigger: 'item',
+	        	        formatter: "{a} <br/>{b} : {c} ({d}%)"
+	        	    },
+	        	    series : [
+	        	        {
+	        	            name:'气体成分',
+	        	            type:'pie',
+	        	            radius : '62%',
+	        	            center: ['50%', '50%'],
+	        	            data: dataMap.rubber[id]
+	        	        }
+	        	    ]
+	        	};
+	        myChart.setOption(option);
+	        
+	        setTimeout(function (){
+	            window.onresize = function () {
+	                myChart.resize();
+	            }
+	        },200)
+	               
+	    });    
+	})();
+}
+
+
+function updateLineChart(id) {
+	var name = ['苯乙烯','苯','二甲苯','丁酮'];
+	
+	document.getElementById('button2').innerHTML= name[id]+'<span class="caret"></span>';
+	(function () {
+	    require.config({
+	        paths: {
+	            echarts: '../echarts-2.2.7/build/dist'
+	        }
+	    });
+
+	    require(
+	    [
+	        'echarts',
+	        'echarts/chart/line'
+	    ],
+	    function (ec) {
+	        var myChart = ec.init(document.getElementById('box2'));
+	        option = {
+	        	    title : {
+	        	        text : name[id]+'排放量随时间变化图',
+	        	        subtext : '橡胶厂'
+	        	    },
+	        	    tooltip : {
+	        	        trigger: 'item',
+	        	        formatter : function (params) {
+	        	            var date = new Date(params.value[0]);
+	        	            data = date.getFullYear() + '-'
+	        	                   + (date.getMonth() + 1) + '-'
+	        	                   + date.getDate() + ' '
+	        	                   + date.getHours() + ':'
+	        	                   + date.getMinutes();
+	        	            return data + '<br/>'
+	        	                   + params.value[1]
+	        	        }
+	        	    },
+	        	    dataZoom: {
+	        	        show: true,
+	        	        start : 70,
+	        	        end : 98
+	        	    },
+	        	    legend : {
+	                    orient: 'vertical',
+	                    x:'right',
+	                    y:'center',
+	        	        data : ['排口','上风口','下风口']
+	        	    },
+	        	    grid: {
+	        	        y2: 80
+	        	    },
+	        	    xAxis : [
+	        	        {
+	        	            type : 'time',
+	        	            splitNumber:10
+	        	        }
+	        	    ],
+	        	    yAxis : [
+	        	        {
+	        	            type : 'value',
+	        	            min : 0
+	        	        }
+	        	    ],
+	        	    series : [
+	        	        {
+	        	            name: '排口',
+	        	            type: 'line',
+	        	            showAllSymbol: true,
+	        	            data: dataMap.rubberGas[id][0]
+	        	        },
+	        	        {
+	        	            name: '上风口',
+	        	            type: 'line',
+	        	            showAllSymbol: true,
+	        	            data: dataMap.rubberGas[id][1]
+	        	        },
+	        	        {
+	        	            name: '下风口',
+	        	            type: 'line',
+	        	            showAllSymbol: true,
+	        	            data: dataMap.rubberGas[id][2]
+	        	        }
+	        	    ]
+	        	};
+	        
+	        myChart.setOption(option);
+	        
+	        setTimeout(function (){
+	            window.onresize = function () {
+	                myChart.resize();
+	            }
+	        },200)
+	               
+	    });    
+	})();
+}
+
+</script>

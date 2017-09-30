@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>点位地图</title>
+    <link rel="stylesheet" type="text/css" href="../vendor/bootstrap/v3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="blk-top">
+            <h2 class="title">VOCs监控分析平台展示</h2>
+        </div>
+        
+ 	  <nav class="vertical">
+	    <ul>
+	      <li>
+	        <a href="emission_location.html">实时监测</a>
+	        <div>
+	          <ul>
+ 				<li><a href="javascript:void(0);" class="active">点位地图</a></li>
+ 				<li><a href="heatmap.html">热力图</a></li>
+	          </ul>
+	        </div>
+	      </li>
+	      <li>
+	        <a href="gas_analysis.html">气体分析</a>
+	        <div>
+	          <ul>
+ 				<li><a href="gas_analysis.html">园区排放一览</a></li>
+				<li><a href="regional_analysis.html">厂区历史数据</a></li>
+				<li><a href="issue_detection.html">异常监测</a></li>
+				<li><a href="component.html">组分构成</a></li>
+	          </ul>
+	        </div>
+	      </li>
+	      <li>
+	        <a href="source_tracking.html">污染溯源</a>
+	        <div>
+	          <ul>
+ 				<li><a href="source_tracking.html">排放源</a></li>
+				<li><a href="monitor_location.html">监测重点</a></li>
+	          </ul>
+	        </div>
+	      </li>
+	    </ul>
+	  </nav>
+	  
+         <div class="blk-bottom row">
+            <div id="box1" class="box" style="min-height: 580px; width: 97%;"></div>
+        </div>
+    </div>
+
+	<script src="http://api.map.baidu.com/api?v=2.0&ak=F6wOCqmG6wlsLB570gTAoe5MRHZM5Siw" type="text/javascript"></script>
+    <script src="../vendor/jquery/jquery.min.js"></script>
+	<script src="../vendor/echarts-2.2.7/extension/BMap/doc/BMap.js"></script>
+	<script src="../vendor/echarts-2.2.7/build/dist/echarts.js"></script>
+	
+</body>
+</html>
+
+<script type="text/javascript">
+
+	var markerVal;
+	var markerGeo;
+	$.getJSON("sensor_val.json", function(data) {
+		markerVal = data;
+		$.getJSON("sensor_geo.json", function(data2) {
+			markerGeo = data2;
+		//	alert(markerVal);
+			(function () {
+			    require.config({
+			        paths: {
+			            echarts: '../vendor/echarts-2.2.7/build/dist'
+			        },
+			        packages: [
+			            {
+			                name: 'BMap',
+			                location: '../vendor/echarts-2.2.7/extension/BMap/src',
+			                main: 'main'
+			            }
+			        ]
+			    });
+
+			    require(
+			    [
+			        'echarts',
+			        'BMap',
+			        'echarts/chart/map'
+			    ],
+			    function (echarts, BMapExtension) {
+
+			        // 初始化地图
+			        var BMapExt = new BMapExtension('box1', BMap, require('echarts'), require('zrender'));
+			        var map = BMapExt.getMap();
+			        var container = BMapExt.getEchartsContainer();
+			    	var point = new BMap.Point(115.96, 39.75);
+			    	map.centerAndZoom(point, 14);
+			        //map.enableScrollWheelZoom(false);
+			        
+			       // map.setMapStyle({style:'grayscale'});
+
+			    	var polygon = new BMap.Polygon([
+			    		new BMap.Point(115.949364,39.770966),
+			    		new BMap.Point(115.948645,39.765199),
+			    		new BMap.Point(115.932835,39.753439),
+			    		new BMap.Point(115.926655,39.739681),
+			    		new BMap.Point(115.928, 39.739),
+			    		new BMap.Point(115.936, 39.734),
+			    		new BMap.Point(115.981, 39.72),
+			    		new BMap.Point(115.986087,39.728362),
+			    		new BMap.Point(115.998447,39.730748),
+			    		new BMap.Point(115.997512,39.744231),
+			    		new BMap.Point(115.98314,39.767972),
+			    		new BMap.Point(115.949364,39.770966)
+			    	], {strokeColor:"red", strokeWeight:2, strokeOpacity:0.8});   
+			    	polygon.setFillOpacity(0.5);
+			    	map.addOverlay(polygon);  
+			    	
+			        // 添加地图缩放控件
+			        var opts = {type: BMAP_NAVIGATION_CONTROL_SMALL};
+			        map.addControl(new BMap.NavigationControl(opts));
+			        
+			        option = {
+			            color: ['gold','aqua','lime'],
+			            title : {
+			                text: '',
+			                subtext:'',
+			                x:'center',
+			                textStyle : {
+			                    color: '#fff'
+			                }
+			            },
+			            tooltip : {
+			                trigger: 'item'
+			            },
+			            toolbox: {
+			                show : false			              	      
+			            },
+			            dataRange: {
+			            	  min : 5,
+			                  max : 40,
+			                  calculable : true,
+			                  x: 'right',
+			                  y: 'center',
+			                  color: ['red','orange','yellow','limegreen']
+			            },
+			            series : [
+			                {
+			                    name:'非甲烷总烃',
+			                    type:'map',
+			                    mapType: 'none',
+			                    data:[],
+			                    geoCoord: markerGeo,                				
+			                    markPoint : {
+			                        symbolSize: 8,       // 标注大小，半宽（半径）参数，当图形为方向或菱形则总宽度为symbolSize * 2
+			                        itemStyle: {
+			                            normal: {
+			                                borderColor: '#AC6400',
+			                                borderWidth: 1,            // 标注边线线宽，单位px，默认为1
+			                                label: {
+			                                    show: true,
+			                                    textStyle: {
+			                                    	color: 'maroon'
+			                                    },
+			                        	        formatter : function (params) {
+			                        	            return Math.round(params.value)
+			                        	        }
+			                                }
+			                            },
+			                            emphasis: {
+			                                borderColor: '#FFFFFF',
+			                                borderWidth: 5,
+			                                label: {
+			                                    show: false
+			                                }
+			                            }
+			                    	},
+			                    	data: 
+			                            markerVal
+			                	}
+			            	},
+			            	{
+			                    name:'北京',
+			                    type:'map',
+			                    mapType: 'none',
+			                    data:[],
+			                    geoCoord: markerGeo,                				
+			                    markPoint : {
+			                    	 symbol:'emptyCircle',
+			                         symbolSize : function (v){
+			                             return 2 + v/100
+			                         },
+			                         effect : {
+			                             show: true,
+			                             shadowBlur : 0
+			                         },
+			                         itemStyle:{
+			                             normal:{
+			                                 label:{show:false}
+			                             }
+			                         },
+			                    	data: []
+			                            //markerVal
+			                	}
+			            	}
+			            ]
+			        };
+
+			        var myChart = BMapExt.initECharts(container);
+			        window.onresize = myChart.onresize;
+			        BMapExt.setOption(option);
+			    }
+			);
+			})();
+
+		});
+		
+
+	});
+
+</script>
+

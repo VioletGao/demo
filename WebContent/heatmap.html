@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>热力图</title>
+    <link rel="stylesheet" type="text/css" href="../vendor/bootstrap/v3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="blk-top">
+            <h2 class="title">VOCs监控分析平台展示</h2>
+         </div>
+         
+ 	  <nav class="vertical">
+	    <ul>
+	      <li>
+	        <a href="emission_location.html">实时监测</a>
+	        <div>
+	          <ul>
+ 				<li><a href="sensor_data.html">点位地图</a></li>
+ 				<li><a href="javascript:void(0);" class="active">热力图</a></li>
+	          </ul>
+	        </div>
+	      </li>
+	      <li>
+	        <a href="gas_analysis.html">气体分析</a>
+	        <div>
+	          <ul>
+ 				<li><a href="gas_analysis.html">园区排放一览</a></li>
+				<li><a href="regional_analysis.html">厂区历史数据</a></li>
+				<li><a href="issue_detection.html">异常监测</a></li>
+				<li><a href="component.html">组分构成</a></li>
+	          </ul>
+	        </div>
+	      </li>
+	      <li>
+	        <a href="source_tracking.html">污染溯源</a>
+	        <div>
+	          <ul>
+ 				<li><a href="source_tracking.html">排放源</a></li>
+				<li><a href="monitor_location.html">监测重点</a></li>
+	          </ul>
+	        </div>
+	      </li>
+	    </ul>
+	  </nav>
+            
+        <div class="blk-bottom">
+        	<ul class="tab" id="heat_tab" style="">
+        	    <li><a href="#" class="tablinks" onclick="load_data('heatmap_NMHC.json', 45)">非甲烷总烃</a></li>      		
+        		<li><a href="#" class="tablinks" onclick="load_data('heatmap_benzene.json', 0.053)">苯 </a></li>
+        		<li><a href="#" class="tablinks" onclick="load_data('heatmap_toluene.json', 0.4)">甲苯</a></li>
+        		<li><a href="#" class="tablinks" onclick="load_data('heatmap_acetone.json', 0.6)">丙酮</a></li>
+        		<li><a href="#" class="tablinks" onclick="load_data('heatmap_DCM.json', 2)">二氯甲烷</a></li>         		         	
+        	</ul>
+            <div id="mapBox" class="box" style="min-height: 570px; top: -30px;"></div>
+        </div>
+    </div>
+
+<script src="http://api.map.baidu.com/api?v=2.0&ak=F6wOCqmG6wlsLB570gTAoe5MRHZM5Siw" type="text/javascript"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
+<script src="../vendor/jquery/jquery.min.js"></script>
+    
+</body>
+</html>
+
+<script type="text/javascript">
+    var map = new BMap.Map("mapBox", {enableMapClick:false}, {minZoom:14, maxZoom:15});          // 创建地图实例
+	var point = new BMap.Point(115.96, 39.75);
+    map.centerAndZoom(point, 14);             // 初始化地图，设置中心点坐标和地图级别
+    map.enableScrollWheelZoom(); // 允许滚轮缩放
+
+    var opts = {type: BMAP_NAVIGATION_CONTROL_SMALL}; // 添加地图缩放控件 
+    map.addControl(new BMap.NavigationControl(opts));
+	
+	map.addControl(new BMap.MapTypeControl()); 
+    map.addControl(new BMap.NavigationControl({type: BMAP_NAVIGATION_CONTROL_SMALL}));
+    
+	var polyline = new BMap.Polygon([
+		new BMap.Point(115.949364,39.770966),
+		new BMap.Point(115.948645,39.765199),
+		new BMap.Point(115.932835,39.753439),
+		new BMap.Point(115.926655,39.739681),
+		new BMap.Point(115.928, 39.739),
+		new BMap.Point(115.936, 39.734),
+		new BMap.Point(115.981, 39.72),
+		new BMap.Point(115.986087,39.728362),
+		new BMap.Point(115.998447,39.730748),
+		new BMap.Point(115.997512,39.744231),
+		new BMap.Point(115.98314,39.767972),
+		new BMap.Point(115.949364,39.770966)
+	], {strokeColor:"red", strokeWeight:2, strokeOpacity:0.8});   //创建折线
+	map.addOverlay(polyline);   //增加折线
+	
+	
+	$.getJSON ('heatmap_NMHC.json', function (info) {
+		points = info;
+		var heatmapOverlay = new BMapLib.HeatmapOverlay({"radius":70});
+		map.addOverlay(heatmapOverlay);
+		heatmapOverlay.setDataSet({data:points,max:45});		
+	});
+    
+    function load_data(filename,val) {
+    	map.clearOverlays();
+    	
+    	var polyline = new BMap.Polygon([
+    		new BMap.Point(115.949364,39.770966),
+    		new BMap.Point(115.948645,39.765199),
+    		new BMap.Point(115.932835,39.753439),
+    		new BMap.Point(115.926655,39.739681),
+    		new BMap.Point(115.928, 39.739),
+    		new BMap.Point(115.936, 39.734),
+    		new BMap.Point(115.981, 39.72),
+    		new BMap.Point(115.986087,39.728362),
+    		new BMap.Point(115.998447,39.730748),
+    		new BMap.Point(115.997512,39.744231),
+    		new BMap.Point(115.98314,39.767972),
+    		new BMap.Point(115.949364,39.770966)
+    	], {strokeColor:"red", strokeWeight:2, strokeOpacity:0.8});   //创建折线
+    	map.addOverlay(polyline);   //增加折线
+    	
+    	$.getJSON (filename, function (info) {
+    		points = info;
+    		var heatmapOverlay = new BMapLib.HeatmapOverlay({"radius":70});
+    		map.addOverlay(heatmapOverlay);
+    		heatmapOverlay.setDataSet({data:points,max:val});		
+    	});     	
+    }
+</script>

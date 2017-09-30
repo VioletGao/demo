@@ -1,0 +1,170 @@
+@charset "UTF-8";
+
+html,body,* {
+	margin:0; 
+	padding:0; 
+	
+}
+body {  font-family: "Microsoft JhengHei","Microsoft YaHei", sans-serif; }
+.blk-top {
+    position: absolute;
+    display: block;
+    width: 88%;
+    right: 0%;
+    height: 103px;
+    overflow: hidden;
+    color: #FFF;
+  	box-shadow: 0 0 2px rgba(0,0,0,.15);
+    padding-top: 10px;
+    cursor: pointer;
+
+    background: #120873;
+
+    background: linear-gradient(#000002, #120873);
+
+    FILTER: progid:DXImageTransform.Microsoft.Gradient(gradientType=0,startColorStr=#000002,endColorStr=#120873); /*IE 6 7 8*/ 
+
+    background: -ms-linear-gradient(top, #000002,  #120873);        /* IE 10 */
+
+    background:-moz-linear-gradient(top, #000002, #120873);/*鐏嫄*/ 
+
+    background:-webkit-gradient(linear, 0% 0%, 0% 100%,from(#000002), to(#120873));/*璋锋瓕*/ 
+
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#000002), to(#120873));      /* Safari 4-5, Chrome 1-9*/
+
+    background: -webkit-linear-gradient(top, #000002, #120873);   /*Safari5.1 Chrome 10+*/
+
+    background: -o-linear-gradient(top, #000002, #120873);  /*Opera 11.10+*/
+}
+.blk-top .title {
+    text-align: center;
+}
+
+.blk-bottom {
+    padding-top: 140px; padding-left: 14%;
+}
+
+.table tr th, .table tr td { 
+    text-align: center; 
+}
+
+.table thead tr {
+    background-color: #120873; color: #FFF; font-size: 16px; 
+}
+
+.box {
+    box-shadow: 0 0 2px rgba(0,0,0,0.8); width: 100%; min-height: 600px; border-radius: 1px; position: relative; top: -18px; left: -15px;
+}
+
+/* Style the list */
+ul.tab {
+    list-style-type: none;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #FFF;
+    position: relative;
+    top: -20px;
+    left: -14px;
+}
+
+/* Float the list items side by side */
+ul.tab li {float: left;}
+
+/* Style the links inside the list items */
+ul.tab li a {
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+/* Change background color of links on hover */
+ul.tab li a:hover {background-color: #ddd;}
+
+/* Create an active/current tablink class */
+ul.tab li a:focus, .active {background-color: #ccc;}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.anchorBL{display:none}
+ 
+nav.vertical {
+  border-radius: 4px;
+  box-shadow: 0 0 2px rgba(0,0,0,.15);
+  overflow: hidden;
+  text-align: center;
+  width: 11%;
+  position: absolute;
+}
+ 
+  nav.vertical > ul {
+    list-style-type: none;
+  }
+ 
+    nav.vertical > ul > li {
+      display: block;
+    }
+ 
+      nav.vertical > ul > li > a {
+        background-color: #120873;
+        background-image: -webkit-linear-gradient(135deg, rgb(114, 51, 98), rgb(157, 34, 60));
+        background-image: -moz-linear-gradient(135deg, #120873, rgb(157, 34, 60));
+        background-image: -o-linear-gradient(135deg, #120873, #2C17B1);
+        background-image: linear-gradient(135deg, #120873, #2C17B1);
+        border-bottom: 1px solid rgba(255,255,255,.1);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.1), 0 1px 1px rgba(0,0,0,.1);
+        color: rgb(255,255,255);
+        display: block;
+        font-size: 1.55rem;
+        font-weight: bold;
+        height: 60px;
+        letter-spacing: .5rem;
+        line-height: 60px;
+        text-shadow: 0 1px 1px rgba(0,0,0,.1);
+      }
+ 
+        nav.vertical > ul > li > a:hover {
+         background-color: rgb(114, 51, 98);
+         background-image: -webkit-linear-gradient(150deg, rgb(114, 51, 98), rgb(114, 51, 98));
+         background-image: -moz-linear-gradient(150deg, rgb(114, 51, 98), rgb(114, 51, 98));
+         background-image: -o-linear-gradient(150deg, rgb(114, 51, 98), rgb(114, 51, 98));
+         background-image: linear-gradient(150deg, #4C036E, #7608AA); 
+         cursor: pointer;
+        }
+         
+          nav.vertical > ul > li > div {
+            background-color: rgb(255,255,255);
+          }
+  
+          nav.vertical > ul > li > div > ul {
+            list-style-type: none;
+          }
+ 
+            nav.vertical > ul > li > div > ul > li > a {
+             background-color: rgb(255,255,255);
+             border-bottom: 1px solid rgba(0,0,0,.05);
+             color: #333331;
+             display: block;
+             font-size: 1.5rem;
+             line-height: 30px;
+             padding: 10px 0;
+             transition: all 0.15s linear;
+            }
+ 
+              nav.vertical > ul > li > div > ul > li > a:hover {
+                background-color: #e8edf3;
+                color: #333331;
+                padding: 10px 0 10px 50px;
+              }
+              
+              nav.vertical > ul > li > div > ul > li > a.active {
+                background-color: #e8edf3;
+              }
